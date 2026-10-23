@@ -1,34 +1,49 @@
-<?php 
-include 'connect.php';
 
+<?php
+require_once 'connect.php';
+
+try {
+    $sql = "SELECT posts.*, users.realname
+            FROM posts
+            LEFT JOIN users ON posts.author = users.id
+            ORDER BY posts.id DESC";
+
+    $query = $conn->prepare($sql);
+    $query->execute();
+
+    $posts = $query->fetchAll(PDO::FETCH_ASSOC);
+
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+    $posts = [];
+}
 ?>
 
 <ul>
     <hr>
-    <?php
-        
-            $sql = "SELECT * FROM posts;";
-            try {
-                $query = $conn->prepare($sql);
-                $query->execute();
-            } catch (PDOException $e) {
-                die("Error: " . $e->getMessage());
-            }
-            $res = $query->fetchAll();
-            foreach($res as $row) {
-                $author = array_filter($_SESSION['users'], function($v, $k) use($row) {
-                    return $v['id'] === $row['author'];
-                }, ARRAY_FILTER_USE_BOTH);
-                $author = array_values($author);
-                $author = $author[0];
-                ?>
-            <li>
-                <h3><?php echo $row['title']; ?></h3>
-                <p><i><?php echo $row['posted'] . ' – ' . $author['realname']; ?></i></p>
-                <p><?php echo $row['body']; ?></p>
-                <hr>
-            </li>
-            <?php }
-        
-    ?>
+
+    <?php foreach ($posts as $row): ?>
+
+        <li>
+            <h3>
+                <?= htmlspecialchars($row['title'], ENT_QUOTES, 'UTF-8') ?>
+            </h3>
+
+            <p>
+                <i>
+                    <?= htmlspecialchars($row['posted'], ENT_QUOTES, 'UTF-8') ?>
+                    -
+                    <?= htmlspecialchars($row['realname'] ?? 'Tuntematon', ENT_QUOTES, 'UTF-8') ?>
+                </i>
+            </p>
+
+            <p>
+                <?= nl2br(htmlspecialchars($row['body'], ENT_QUOTES, 'UTF-8')) ?>
+            </p>
+
+            <hr>
+        </li>
+
+    <?php endforeach; ?>
+
 </ul>

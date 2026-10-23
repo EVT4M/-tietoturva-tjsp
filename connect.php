@@ -1,8 +1,9 @@
 <?php
-    $host="localhost";
-    $dbuser="sql-user";
-    $dbpassword="sql-user";
-    $db="sql-inject";
+    $host = "localhost";
+    $dbuser = "root";
+    $dbpassword = "";
+    $db = "salasanafoorumi";
+
 
     try {
         $conn = new PDO("mysql:host=$host; dbname=$db", $dbuser, $dbpassword, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
