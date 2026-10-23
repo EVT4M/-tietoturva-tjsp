@@ -17,7 +17,7 @@ if ($username === '' || $password === '') {
 }
 
 try {
-    $sql = "SELECT id, username, realname, password
+    $sql = "SELECT id, username, realname, password, role
             FROM users
             WHERE username = :username
             LIMIT 1";
@@ -36,8 +36,9 @@ try {
         $_SESSION['user'] = [
             'id' => $user['id'],
             'username' => $user['username'],
-            'realname' => $user['realname']
-        ];
+            'realname' => $user['realname'],
+            'role' => $user['role']
+];
 
         header('Location: home.php');
         exit;
